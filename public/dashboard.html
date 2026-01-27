@@ -1,71 +1,112 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard de Red</title>
+  <meta charset="UTF-8" />
+  <title>Monitoreo de Red</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       background: #f4f6f8;
+      margin: 0;
       padding: 20px;
     }
+
     h1 {
       text-align: center;
+      margin-bottom: 30px;
     }
-    .card {
+
+    #estado-red {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .tarjeta {
       background: white;
-      padding: 15px;
-      margin: 10px auto;
       border-radius: 8px;
-      width: 300px;
+      padding: 15px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-left: 6px solid gray;
     }
+
     .online {
-      color: green;
+      border-left-color: #2ecc71;
+    }
+
+    .offline {
+      border-left-color: #e74c3c;
+    }
+
+    .tarjeta h3 {
+      margin: 0 0 10px 0;
+    }
+
+    .estado {
       font-weight: bold;
     }
-    .offline {
-      color: red;
-      font-weight: bold;
+
+    .online-text {
+      color: #2ecc71;
+    }
+
+    .offline-text {
+      color: #e74c3c;
     }
   </style>
 </head>
+
 <body>
 
-<h1>📡 Monitoreo de Red</h1>
-<div id="contenedor" style="display:flex; flex-wrap:wrap;"></div>
+  <h1>📡 Monitoreo de Red</h1>
 
+  <div id="estado-red"></div>
 
-<script>
-console.log("Dashboard JS cargado");
+  <script>
+    async function cargarEstado() {
+      try {
+        const respuesta = await fetch("/api/status");
+        const dispositivos = await respuesta.json();
 
-async function cargarEstado() {
-  const res = await fetch("/api/status");
-  const data = await res.json();
+        const contenedor = document.getElementById("estado-red");
+        contenedor.innerHTML = "";
 
-  const contenedor = document.getElementById("contenedor");
-  contenedor.innerHTML = "";
+        dispositivos.forEach(d => {
+          const tarjeta = document.createElement("div");
+          tarjeta.classList.add("tarjeta");
 
-  data.forEach(dispositivo => {
-    const card = document.createElement("div");
-    card.style.border = "1px solid #ccc";
-    card.style.padding = "10px";
-    card.style.margin = "10px";
-    card.style.width = "250px";
+          if (d.estado === "online") {
+            tarjeta.classList.add("online");
+          } else {
+            tarjeta.classList.add("offline");
+          }
 
-    card.innerHTML = `
-      <h3>${dispositivo.nombre}</h3>
-      <p><b>IP:</b> ${dispositivo.ip}</p>
-      <p><b>Estado:</b> ${dispositivo.estado}</p>
-    `;
+          tarjeta.innerHTML = `
+            <h3>${d.nombre}</h3>
+            <p><strong>IP:</strong> ${d.ip}</p>
+            <p class="estado ${
+              d.estado === "online" ? "online-text" : "offline-text"
+            }">
+              ${d.estado.toUpperCase()}
+            </p>
+          `;
 
-    contenedor.appendChild(card);
-  });
-}
+          contenedor.appendChild(tarjeta);
+        });
 
-cargarEstado();
-</script>
+      } catch (error) {
+        console.error("Error cargando estado:", error);
+      }
+    }
 
+    // Cargar al iniciar
+    cargarEstado();
+
+    // Refrescar cada 10 segundos
+    setInterval(cargarEstado, 10000);
+  </script>
 
 </body>
 </html>
