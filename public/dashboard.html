@@ -37,7 +37,7 @@
 
 <script>
 async function cargarEstado() {
-  const res = await fetch('/api/status');
+  const res = await fetch('https://proyecto-red-monitor.onrender.com/api/status');
   const datos = await res.json();
 
   const contenedor = document.getElementById('contenedor');
