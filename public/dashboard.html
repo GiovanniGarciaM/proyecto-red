@@ -52,6 +52,14 @@
 
   <!-- CONTENEDOR DONDE SE PINTAN LAS TARJETAS -->
   <div id="equipos" class="grid"></div>
+  <script>
+function formatearHoraLocal(fechaISO) {
+  if (!fechaISO) return "Sin datos";
+
+  const fecha = new Date(fechaISO);
+  return fecha.toLocaleString(); 
+}
+</script>
 
   <script>
     async function cargarEstado() {
