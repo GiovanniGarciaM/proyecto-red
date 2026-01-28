@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Monitoreo de Red</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: #f4f6f8;
+      margin: 0;
       padding: 20px;
     }
 
@@ -16,7 +18,7 @@
       margin-bottom: 30px;
     }
 
-    .grid {
+    #equipos {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
@@ -24,24 +26,36 @@
     }
 
     .card {
+      width: 260px;
       background: white;
-      padding: 15px;
       border-radius: 8px;
-      width: 220px;
+      padding: 15px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-left: 6px solid gray;
     }
 
     .online {
-      border-left: 6px solid #2ecc71;
+      border-left-color: #2ecc71;
     }
 
     .offline {
-      border-left: 6px solid #e74c3c;
+      border-left-color: #e74c3c;
+    }
+
+    .nombre {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .ip {
+      color: #555;
+      margin-bottom: 5px;
     }
 
     .estado {
-      margin-top: 10px;
       font-weight: bold;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -50,50 +64,50 @@
 
   <h1>📡 Monitoreo de Red</h1>
 
-  <!-- CONTENEDOR DONDE SE PINTAN LAS TARJETAS -->
-  <div id="equipos" class="grid"></div>
-  <script>
-function formatearHoraLocal(fechaISO) {
-  if (!fechaISO) return "Sin datos";
-
-  const fecha = new Date(fechaISO);
-  return fecha.toLocaleString(); 
-}
-</script>
+  <div id="equipos"></div>
 
   <script>
-    async function cargarEstado() {
+    function formatearHoraLocal(fechaISO) {
+      if (!fechaISO) return "Sin datos";
+      const fecha = new Date(fechaISO);
+      return fecha.toLocaleString("es-MX");
+    }
+
+    async function cargarEquipos() {
       try {
-        const res = await fetch('/api/status');
-        const equipos = await res.json();
+        const response = await fetch("/api/status");
+        const equipos = await response.json();
 
-        const contenedor = document.getElementById('equipos');
-        contenedor.innerHTML = '';
+        const contenedor = document.getElementById("equipos");
+        contenedor.innerHTML = "";
 
-        equipos.forEach(e => {
-          const tarjeta = document.createElement('div');
-          tarjeta.className = 'card ' + (e.estado === 'online' ? 'online' : 'offline');
+        equipos.forEach(equipo => {
+          const card = document.createElement("div");
+          card.classList.add("card");
 
-          tarjeta.innerHTML = `
-            <h3>${e.nombre}</h3>
-            <p>IP: ${e.ip}</p>
-            <p>Última Respuesta: ${formatearHoraLocal(equipo.ultimaRespuesta)}</p>
-            <div class="estado">${e.estado.toUpperCase()}</div>
+          if (equipo.estado === "online") {
+            card.classList.add("online");
+          } else {
+            card.classList.add("offline");
+          }
+
+          card.innerHTML = `
+            <div class="nombre">${equipo.nombre}</div>
+            <div class="ip">IP: ${equipo.ip}</div>
+            <div>Última Respuesta: ${formatearHoraLocal(equipo.ultimaRespuesta)}</div>
+            <div class="estado">${equipo.estado.toUpperCase()}</div>
           `;
 
-          contenedor.appendChild(tarjeta);
+          contenedor.appendChild(card);
         });
 
       } catch (error) {
-        console.error('Error al cargar estado:', error);
+        console.error("Error cargando equipos:", error);
       }
     }
 
-    // Cargar al iniciar
-    cargarEstado();
-
-    // Actualizar cada 10 segundos
-    setInterval(cargarEstado, 10000);
+    cargarEquipos();
+    setInterval(cargarEquipos, 10000); // cada 10 segundos
   </script>
 
 </body>
