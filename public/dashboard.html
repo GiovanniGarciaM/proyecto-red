@@ -77,7 +77,7 @@ function formatearHoraLocal(fechaISO) {
           tarjeta.innerHTML = `
             <h3>${e.nombre}</h3>
             <p>IP: ${e.ip}</p>
-            <p>Ultima Respuesta: ${e.ultimoPing}</p>
+            <p>Última Respuesta: ${formatearHoraLocal(equipo.ultimaRespuesta)}</p>
             <div class="estado">${e.estado.toUpperCase()}</div>
           `;
 
