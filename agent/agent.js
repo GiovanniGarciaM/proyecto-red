@@ -4,8 +4,8 @@ const fetch = (...args) =>
 const SERVIDOR = 'https://proyecto-red-monitor.onrender.com/api/status';
 
 const dispositivos = [
-  { nombre: 'Router TotalPlay', ip: '192.168.100.1' },
-  { nombre: 'PC Principal', ip: '192.168.100.2' },
+  { nombre: 'Router TotalPlay', ip: '192.168.100.1', ultimaRespuesta: new Date().toISOString() },
+  { nombre: 'PC Principal', ip: '192.168.100.2', ultimaRespuesta: new Date().toISOString() },
   { nombre: 'DVR', ip: '192.168.0.20' }
 ];
 
