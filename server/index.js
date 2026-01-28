@@ -12,13 +12,13 @@ let dispositivos = [
     nombre: "Router Totalplay",
     ip: "192.168.100.1",
     estado: "online",
-    ultimoPing: new Date().toLocaleTimeString()
+    ultimaRespuesta: new Date().toISOString()
   },
   {
     nombre: "PC Principal",
     ip: "192.168.100.2",
     estado: "online",
-    ultimoPing: new Date().toLocaleTimeString()
+    ultimaRespuesta: new Date().toISOString()
   },
   {
     nombre: "DVR",
